@@ -3,11 +3,17 @@ import {
     // redirect
 } from "react-router-dom";
 import RegisterPage from "../views/RegisterPage";
+import LoginPage from "../views/LoginPage";
+
 
 const router = createBrowserRouter([
     {
-      path: "/home",
+      path: "/",
       element: <RegisterPage />,
+    },
+    {
+      path: "/login",
+      element: <LoginPage />,
     },
   ]);
 

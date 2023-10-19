@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -169,12 +170,12 @@ export default function RegisterPage() {
         </svg>
       </div>
             </div>
-            <button className="btn btn-error mt-6 w-full">Registrasi</button>
+            <Link to='/login' className="btn btn-error mt-6 w-full">Registrasi</Link>
             <div className="flex flex-row font-semibold text-sm gap-1">
               <p>sudah punya akun? login</p>
-              <a href="" className="text-error">
+              <Link to='/login' className='text-error'>
                 di sini
-              </a>
+              </Link>
             </div>
           </div>
         </div>
