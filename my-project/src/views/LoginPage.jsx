@@ -90,7 +90,7 @@ export default function LoginPage() {
                 </svg>
               </div>
             </div>
-            <button className="btn btn-error mt-6 w-full">Masuk</button>
+            <Link to='/home' className="btn btn-error mt-6 w-full">Masuk</Link>
             <div className="flex flex-row font-semibold text-sm gap-1">
               <p>belum punya akun? registrasi</p>
               <Link to="/" className="text-error">
