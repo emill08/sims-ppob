@@ -7,6 +7,8 @@ import LoginPage from "../views/LoginPage";
 import HomePage from "../views/HomePage";
 import Layout from "../components/Layout";
 import TopupPage from "../views/TopupPage";
+import PaymentPage from "../views/PaymentPage";
+import HistoryPage from "../views/HistoryPage";
 
 
 const router = createBrowserRouter([
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
         {
           path: "/topup",
           element: <TopupPage />,
+        },
+        {
+          path: "/payment",
+          element: <PaymentPage />,
+        },
+        {
+          path: "/transaction",
+          element: <HistoryPage />,
         },
       ]
   },
