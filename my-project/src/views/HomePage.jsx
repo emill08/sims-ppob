@@ -11,7 +11,7 @@ export default function HomePage() {
 
   for (let i = startNumber; i <= endNumber; i++) {
     menuIcon.push(
-      <Link to="/" className="hover:scale-125">
+      <Link to="/payment" className="hover:scale-125">
         <img
           src={`/menu (${i}).png`}
           key={i}
