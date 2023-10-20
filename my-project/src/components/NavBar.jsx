@@ -35,7 +35,7 @@ export default function NavBar() {
             <NavLink
               to="/akun"
               className={`font-bold text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-gray-600 ${
-                location.pathname === "/akun" ? "text-red-500" : ""
+                location.pathname === "/akun" || location.pathname === "/edit" ? "text-red-500" : ""
               }`}
             >
               Akun

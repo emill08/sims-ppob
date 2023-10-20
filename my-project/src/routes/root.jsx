@@ -9,6 +9,8 @@ import Layout from "../components/Layout";
 import TopupPage from "../views/TopupPage";
 import PaymentPage from "../views/PaymentPage";
 import HistoryPage from "../views/HistoryPage";
+import AccountPage from "../views/AccountPage";
+import EditPage from "../views/EditPage";
 
 
 const router = createBrowserRouter([
@@ -44,6 +46,14 @@ const router = createBrowserRouter([
         {
           path: "/transaction",
           element: <HistoryPage />,
+        },
+        {
+          path: "/akun",
+          element: <AccountPage />,
+        },
+        {
+          path: "/edit",
+          element: <EditPage />,
         },
       ]
   },
