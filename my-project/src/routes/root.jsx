@@ -6,6 +6,7 @@ import RegisterPage from "../views/RegisterPage";
 import LoginPage from "../views/LoginPage";
 import HomePage from "../views/HomePage";
 import Layout from "../components/Layout";
+import TopupPage from "../views/TopupPage";
 
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         {
           path: "/home",
           element: <HomePage />,
+        },
+        {
+          path: "/topup",
+          element: <TopupPage />,
         },
       ]
   },
