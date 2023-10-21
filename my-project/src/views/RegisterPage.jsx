@@ -1,12 +1,54 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { postRegister } from '../redux/action/userAction';
+import Swal from 'sweetalert2'
 
 export default function RegisterPage() {
+  const navigate = useNavigate()
+
     const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+      email: '',
+      first_name: '',
+      last_name: '',
+      password: '',
+      confirmPassword: '',
+    });
 
     const togglePasswordVisibility = () => {
       setShowPassword((prevState) => !prevState);
     };
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await postRegister(formData)();
+        navigate('/login')
+        console.log('Registration successful:', response);
+        Swal.fire({
+          icon: 'success',
+          title: 'Thankyou',
+          text: response.message,
+        })
+      } catch (error) {
+        console.log(error, '--------- ini error');
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      }
+    };
+    
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -21,7 +63,9 @@ export default function RegisterPage() {
               <p className="text-3xl font-bold mt-5">Lengkapi data untuk</p>
               <p className="text-3xl font-bold">membuat akun</p>
             </div>
-            <div className="relative w-full">
+            <form onSubmit={handleSubmit}>
+
+            <div className="relative w-96 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -33,12 +77,15 @@ export default function RegisterPage() {
   <path strokeLinecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
               </svg>
               <input
-                type="email"
-                placeholder="masukan email anda"
-                className="input input-bordered pl-10 w-full"
-              />
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="masukan email anda"
+                  className="input input-bordered pl-10 w-full"
+                />
             </div>
-            <div className="relative w-full">
+            <div className="relative w-96 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -54,12 +101,15 @@ export default function RegisterPage() {
                 />
               </svg>
               <input
-                type="text"
-                placeholder="nama depan"
-                className="input input-bordered pl-10 w-full"
-              />
+                  type="text"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleInputChange}
+                  placeholder="nama depan"
+                  className="input input-bordered pl-10 w-full"
+                />
             </div>
-            <div className="relative w-full">
+            <div className="relative w-96 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -75,12 +125,15 @@ export default function RegisterPage() {
                 />
               </svg>
               <input
-                type="text"
-                placeholder="nama belakang"
-                className="input input-bordered pl-10 w-full"
-              />
+                  type="text"
+                  name="last_name"
+                  value={formData.nama_belakang}
+                  onChange={handleInputChange}
+                  placeholder="nama belakang"
+                  className="input input-bordered pl-10 w-full"
+                />
             </div>
-            <div className="relative w-full">
+            <div className="relative w-96 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -96,8 +149,11 @@ export default function RegisterPage() {
                 />
               </svg>
               <input
-        placeholder="buat password"
         type={showPassword ? 'text' : 'password'}
+        name="password"
+        value={formData.password}
+        onChange={handleInputChange}
+        placeholder="buat password"
         className="text-md block pl-10 px-3 py-2 rounded-lg w-full bg-white border-2 border-gray-300 shadow-md focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
       />
       <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
@@ -125,7 +181,7 @@ export default function RegisterPage() {
         </svg>
       </div>
             </div>
-            <div className="relative w-full">
+            <div className="relative w-96 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -169,8 +225,9 @@ export default function RegisterPage() {
           />
         </svg>
       </div>
-            </div>
-            <Link to='/login' className="btn btn-error mt-6 w-full">Registrasi</Link>
+            </div>     
+            <button type='submit' className="btn btn-error mt-6 w-full">Registrasi</button>
+            </form>
             <div className="flex flex-row font-semibold text-sm gap-1">
               <p>sudah punya akun? login</p>
               <Link to='/login' className='text-error'>

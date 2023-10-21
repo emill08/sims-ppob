@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 export default function AccountPage() {
+  const navigate = useNavigate()
+
   const response = {
     status: 0,
     message: "Sukses",
@@ -11,6 +14,18 @@ export default function AccountPage() {
       profile_image: "https://minio.nutech-integrasi.app/take-home-test/null",
     },
   };
+
+  function handleLogout() {
+    localStorage.clear()
+    navigate('/')
+    Swal.fire({
+      position: 'bottom-end',
+      icon: 'success',
+      title: 'Logout successful',
+      showConfirmButton: false,
+      timer: 1500
+    })
+  }
 
   return (
     <div className="flex flex-col items-center gap-5 mt-9">
@@ -126,7 +141,7 @@ export default function AccountPage() {
       <Link to="/edit" className="w-1/2 mt-4 p-2 font-bold text-error border border-error text-center rounded">
         Edit Profile
       </Link>
-      <button className="w-1/2 mt-4 p-2 font-bold text-white bg-error text-center rounded">
+      <button onClick={handleLogout} className="w-1/2 mt-4 p-2 font-bold text-white bg-error text-center rounded">
         Logout
       </button>
     </div>

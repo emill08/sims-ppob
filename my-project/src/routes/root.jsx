@@ -1,6 +1,6 @@
 import {
     createBrowserRouter,
-    // redirect
+    redirect
 } from "react-router-dom";
 import RegisterPage from "../views/RegisterPage";
 import LoginPage from "../views/LoginPage";
@@ -24,12 +24,12 @@ const router = createBrowserRouter([
     },
     {
       element: <Layout />,
-      // loader: () => {
-      //     if (!localStorage.getItem("access_token")) {
-      //         return redirect('/')
-      //     }
-      //     return null;
-      // },
+      loader: () => {
+          if (!localStorage.getItem("token")) {
+              return redirect('/')
+          }
+          return null;
+      },
       children: [
         {
           path: "/home",

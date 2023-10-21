@@ -39,6 +39,37 @@ export default function HomePage() {
     );
   }
 
+  // test authorization
+  function handleProfile() {
+    try {
+
+      fetch("https://take-home-test-api.nutech-integrasi.app/profile", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((errorData) => {
+              throw new Error(errorData.message || "Failed to fetch profile data");
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching profile data:", error.message);
+        });
+    } catch (error) {
+      console.error("Error in handleProfile:", error.message);
+    }
+  }
+  
+  
+
   return (
     <div className="flex flex-col mt-9 gap-3 mx-44">
       <div className="flex flex-row justify-between">
@@ -66,6 +97,7 @@ export default function HomePage() {
       <div className="carousel carousel-center space-x-16 rounded-box">
         {bannerPromo}
       </div>
+      <button onClick={handleProfile} className="flex justify-center">test</button>
     </div>
   );
 }
