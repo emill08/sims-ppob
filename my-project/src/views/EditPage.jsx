@@ -10,6 +10,8 @@ export default function EditPage() {
   const [userData, setUserData] = useState(null)
   const [data, setData] = useState({ email: '', first_name: '', last_name: ''})
   const [isFileInputVisible, setIsFileInputVisible] = useState(false)
+  const [imageUpdated, setImageUpdated] = useState(false);
+
 
     useEffect(() => {
       const fetchProfile = async () => {
@@ -25,6 +27,7 @@ export default function EditPage() {
       fetchProfile();
     }, []);
 
+
     const handlePhotoUpload = async (event) => {
       const imageFile = event.target.files[0];
       if (imageFile) {
@@ -33,9 +36,13 @@ export default function EditPage() {
           formData.append("file", imageFile);
           const response = await editProfilePhoto(formData);
           console.log("Profile photo updated:", response);
+          setImageUpdated(true);
+          setIsFileInputVisible(false)
           Swal.fire({
             icon: 'success',
             text: `Profile has been updated`,
+            showConfirmButton: false,
+            timer: 1500
           })
         } catch (error) {
           console.error("Error updating profile photo:", error.message);
@@ -48,6 +55,23 @@ export default function EditPage() {
       }
     };
   
+    useEffect(() => {
+      if (imageUpdated) {
+        const fetchProfile = async () => {
+          try {
+            const profile = await handleProfile();
+            console.log(profile, 'ini profile');
+            setUserData(profile.data);
+          } catch (error) {
+            console.error("Error fetching profile:", error.message);
+          }
+        };
+      
+        fetchProfile();
+    
+        setImageUpdated(false);
+      }
+    }, [imageUpdated]);
 
     function changeValue(event) {
       let { name, value } = event.target
@@ -84,7 +108,7 @@ const handleCancel = () => {
 };
 
     return (
-      <form onSubmit={handleEdit} className="flex flex-col items-center gap-5 mt-9">
+      <div className="flex flex-col items-center gap-5 mt-9">
  <div className="relative">
       <img
         src={userData ? userData.profile_image : '/Profile Photo.png'}
@@ -92,7 +116,7 @@ const handleCancel = () => {
         className="w-36 h-36"
       />
       {isFileInputVisible ? (
-        <form onSubmit={handlePhotoUpload} className="">
+        <div className="">
           <input
             type="file"
             name="profile_image"
@@ -105,11 +129,8 @@ const handleCancel = () => {
           <button onClick={handleCancel} className="w-1/4 border border-error mt-2 mr-4 p-2 font-bold text-error text-center rounded">
             Cancel
           </button>
-          <button type="submit" className="w-1/4 mt-2 p-2 font-bold text-white border border-success bg-success text-center rounded">
-            Submit
-          </button>
         </div>
-        </form>
+        </div>
       ) : (
         <button
           onClick={() => setIsFileInputVisible(true)}
@@ -132,11 +153,11 @@ const handleCancel = () => {
         </button>
       )}
     </div>
-  
         <p className="text-3xl font-bold mb-4">
         {userData ? userData.first_name + " " + userData.last_name : "Loading..."}
         </p>
   
+    <form onSubmit={handleEdit} className="w-full flex flex-col items-center">
         <div className="w-1/2">
           <div className="flex flex-col">
             <p className="mb-2 font-bold">Email</p>
@@ -221,10 +242,11 @@ const handleCancel = () => {
         <button type="submit" className="w-1/2 mt-4 p-2 font-bold text-white bg-error text-center rounded">
           Simpan
         </button>
+        </form>
         <Link to="/akun" className="w-1/2 mt-4 p-2 font-bold border border-error text-error bg-base-100 text-center rounded">
           Batalkan
         </Link>
-      </form>
+      </div>
     );
   }
   

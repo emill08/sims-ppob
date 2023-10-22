@@ -9,12 +9,12 @@ export default function AccountPage() {
   const navigate = useNavigate()
   const [userData, setUserData] = useState(null)
   const [isFileInputVisible, setIsFileInputVisible] = useState(false)
+  const [imageUpdated, setImageUpdated] = useState(false);
 
 
   const handleCancel = () => {
     setIsFileInputVisible(false);
   };
-
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -38,7 +38,8 @@ export default function AccountPage() {
         formData.append("file", imageFile);
         const response = await editProfilePhoto(formData);
         console.log("Profile photo updated:", response);
-        navigate('/home')
+        setImageUpdated(true);
+        setIsFileInputVisible(false)
         Swal.fire({
           icon: 'success',
           text: `Profile has been updated`,
@@ -68,16 +69,34 @@ export default function AccountPage() {
     })
   }
 
+  useEffect(() => {
+    if (imageUpdated) {
+      const fetchProfile = async () => {
+        try {
+          const profile = await handleProfile();
+          console.log(profile, 'ini profile');
+          setUserData(profile.data);
+        } catch (error) {
+          console.error("Error fetching profile:", error.message);
+        }
+      };
+    
+      fetchProfile();
+  
+      setImageUpdated(false);
+    }
+  }, [imageUpdated]);
+
   return (
     <div className="flex flex-col items-center gap-5 mt-9">
  <div className="relative">
       <img
         src={userData ? userData.profile_image : '/Profile Photo.png'}
         alt="ProfilePicture"
-        className="w-36 h-36"
+        className="h-36"
       />
       {isFileInputVisible ? (
-        <form onSubmit={handlePhotoUpload} className="">
+        <div className="">
           <input
             type="file"
             name="profile_image"
@@ -90,11 +109,8 @@ export default function AccountPage() {
           <button onClick={handleCancel} className="w-1/4 border border-error mt-2 mr-4 p-2 font-bold text-error text-center rounded">
             Cancel
           </button>
-          <button type="submit" className="w-1/4 mt-2 p-2 font-bold text-white border border-success bg-success text-center rounded">
-            Submit
-          </button>
         </div>
-        </form>
+        </div>
       ) : (
         <button
           onClick={() => setIsFileInputVisible(true)}
