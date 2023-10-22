@@ -65,6 +65,8 @@ export default function EditPage() {
             Swal.fire({
                 icon: 'success',
                 text: `Profile has been updated`,
+                showConfirmButton: false,
+                timer: 1500
               })
         })
         .catch((error) => {
