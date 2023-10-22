@@ -78,7 +78,7 @@ export default function HomePage() {
         {/* mini profile */}
         <div className="flex flex-col">
           <img
-            src="/Profile Photo.png"
+            src={userData ? userData.profile_image : '/Profile Photo.png'}
             // src="{userData.profile}"
             alt="ProfilePicture"
             className="w-16 h-16"

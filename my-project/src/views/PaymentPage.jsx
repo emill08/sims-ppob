@@ -101,7 +101,7 @@ export default function PaymentPage() {
         {/* mini profile */}
         <div className="flex flex-col">
           <img
-            src="/Profile Photo.png"
+            src={userData ? userData.profile_image : '/Profile Photo.png'}
             alt="ProfilePicture"
             className="w-16 h-16"
           />
