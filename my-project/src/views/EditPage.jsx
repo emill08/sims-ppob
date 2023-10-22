@@ -113,7 +113,7 @@ const handleCancel = () => {
       <img
         src={userData ? userData.profile_image : '/Profile Photo.png'}
         alt="ProfilePicture"
-        className="w-36 h-36"
+        className="h-36"
       />
       {isFileInputVisible ? (
         <div className="">

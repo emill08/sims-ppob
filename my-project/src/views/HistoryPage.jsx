@@ -93,7 +93,7 @@ export default function HistoryPage() {
           <img
             src={userData ? userData.profile_image : "/Profile Photo.png"}
             alt="ProfilePicture"
-            className="w-16 h-16"
+            className="h-20"
           />
           <h3 className="text-2xl mt-3">Selamat datang,</h3>
           <h1 className="text-3xl font-bold">
