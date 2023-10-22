@@ -194,11 +194,11 @@ export function postRegister(data) {
         body: formData,
       });
   
+      handleProfile()
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Update profile photo failed");
       }
-  
       const responseData = await response.json();
       return responseData;
     } catch (error) {
