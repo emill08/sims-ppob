@@ -1,20 +1,96 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from 'react-redux'
+import { getBalance, addBalance, handleProfile } from "../redux/action/userAction";
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 export default function TopupPage() {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [manualAmount, setManualAmount] = useState(null);
+  const [balance, setBalance] = useState(0)
+  const [data, setData] = useState({top_up_amount: 0});
+  const [userData, setUserData] = useState(null)
+
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleAmountSelect = (amount) => {
     setSelectedAmount((prevAmount) => (prevAmount === amount ? null : amount));
     setManualAmount(null);
+    setData({ top_up_amount: amount })
   };
 
   const handleManualAmountChange = (e) => {
     const amount = parseInt(e.target.value, 10);
     setManualAmount(isNaN(amount) ? null : amount);
+    setData({ top_up_amount: amount })
   };
 
   const isButtonDisabled = selectedAmount === null && manualAmount === null;
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profile = await handleProfile();
+        console.log(profile, 'ini profile');
+        setUserData(profile.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error.message);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await getBalance();
+        console.log(response, 'ini di useEffect');
+        setBalance(response.data);
+      } catch (error) {
+        console.error("Error di useEffect:", error.message);
+      }
+    };
+  
+    fetchBalance();
+  }, []);
+
+  const handleTopup = async (e) => {
+    e.preventDefault();
+    if (!isButtonDisabled) {
+      try {
+        const topUpData = { top_up_amount: data.top_up_amount };
+        dispatch(addBalance(data))
+  
+        const response = getBalance();
+        setBalance(response.data);
+  
+        setSelectedAmount(null);
+        setManualAmount(null);
+        navigate("/home")
+
+        Swal.fire({
+          icon: 'success',
+          title: `Top Up with an amount of ${topUpData.top_up_amount} was successful`,
+          showConfirmButton: false,
+          timer: 1500
+        })
+
+      } catch (error) {
+        console.error("Error during top-up:", error.message);
+        Swal.fire({
+          icon: 'error',
+          title: `${error.message}`,
+          showConfirmButton: false,
+          timer: 1500
+        })
+      }
+    }
+  };
+  
+  
 
   return (
     <div className="flex flex-col mt-9 gap-3 mx-44">
@@ -27,13 +103,13 @@ export default function TopupPage() {
             className="w-16 h-16"
           />
           <h3 className="text-2xl mt-3">Selamat datang,</h3>
-          <h1 className="text-3xl font-bold">Kristanto Wibowo</h1>
+          <h1 className="text-3xl font-bold">{userData ? userData.first_name + " " + userData.last_name : "Loading..."}</h1>
         </div>
 
         {/* saldo */}
         <div className="px-5 py-6 flex flex-col bg-[url('/Background%20Saldo.png')] bg-cover bg-center w-[670px] h-[161px]">
           <h3 className="text-white text-md mt-3">Saldo anda</h3>
-          <h1 className="text-white text-3xl font-bold mt-1">Rp 0</h1>
+          <h1 className="text-white text-3xl font-bold mt-1">Rp {balance ? balance.balance : "Loading..."}</h1>
           <div className="flex items-center mt-4 mr">
             <h3 className="text-white text-sm">Lihat Saldo</h3>
           </div>
@@ -41,7 +117,7 @@ export default function TopupPage() {
       </div>
 
       {/* TOP UP */}
-      <div className="mt-16 flex flex-col">
+      <form onSubmit={handleTopup} className="mt-16 flex flex-col">
         <p className="font-semibold">Silahkan masukkan</p>
         <p className="font-bold text-4xl">Nominal Top Up</p>
         <div className="flex flex-row mt-6">
@@ -63,6 +139,8 @@ export default function TopupPage() {
               </svg>
               <input
                 type="number"
+                name="top_up_amount"
+
                 placeholder="Masukkan nominal Top Up"
                 className="w-full pl-10 p-2 mt-2 border border-gray-300 rounded"
                 value={manualAmount || ""}
@@ -71,7 +149,7 @@ export default function TopupPage() {
                 max="1000000"
               />
             </div>
-            <button
+            <button type="submit"
               className={`w-full mt-4 p-2 text-white text-center rounded ${
                 isButtonDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-error"
               }`}
@@ -104,7 +182,7 @@ export default function TopupPage() {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

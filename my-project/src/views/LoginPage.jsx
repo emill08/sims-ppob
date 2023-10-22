@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       const response = await postLogin(formData)();
       navigate("/home");
-      console.log("Login successful:", response);
+      // console.log("Login successful:", response);
       Swal.fire({
         position: 'top-end',
         icon: 'success',

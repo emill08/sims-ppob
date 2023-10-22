@@ -1,17 +1,60 @@
+import { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux'
+import { useNavigate, Link } from 'react-router-dom'
+import { handleProfile, editProfile } from "../redux/action/userAction";
+import Swal from "sweetalert2"
+
 export default function EditPage() {
-    const response = {
-      status: 0,
-      message: "Sukses",
-      data: {
-        email: "emil@test.com",
-        first_name: "em",
-        last_name: "il",
-        profile_image: "https://minio.nutech-integrasi.app/take-home-test/null",
-      },
-    };
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [userData, setUserData] = useState(null)
+  const [data, setData] = useState({ email: '', first_name: '', last_name: ''})
+
+    useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const profile = await handleProfile();
+          console.log(profile, 'ini profile di edit page');
+          setUserData(profile.data);
+        } catch (error) {
+          console.error("Error fetching profile:", error.message);
+        }
+      };
+    
+      fetchProfile();
+    }, []);
   
+
+    function changeValue(event) {
+      let { name, value } = event.target
+      setData({
+          ...data,
+          [name]: value
+      })
+  }
+
+  function handleEdit(event) {
+    event.preventDefault()
+    dispatch(editProfile(data))
+        .then(() => {
+            navigate('/akun')
+            Swal.fire({
+                icon: 'success',
+                text: `Profile has been updated`,
+              })
+        })
+        .catch((error) => {
+            console.log(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+              })
+        })
+}
+
     return (
-      <div className="flex flex-col items-center gap-5 mt-9">
+      <form onSubmit={handleEdit} className="flex flex-col items-center gap-5 mt-9">
   <div className="relative">
     <img
       src="/Profile Photo.png"
@@ -37,7 +80,7 @@ export default function EditPage() {
   </div>
   
         <p className="text-3xl font-bold mb-4">
-          {response.data.first_name + " " + response.data.last_name}
+        {userData ? userData.first_name + " " + userData.last_name : "Loading..."}
         </p>
   
         <div className="w-1/2">
@@ -59,7 +102,9 @@ export default function EditPage() {
               </svg>
               <input
                 type="email"
-                value={response.data.email}
+                name="email"
+                placeholder={userData ? userData.email : "Loading..."}
+                onChange={changeValue}
                 className="input input-bordered pl-10 w-full"
               />
             </div>
@@ -84,7 +129,9 @@ export default function EditPage() {
               </svg>
               <input
                 type="text"
-                value={response.data.first_name}
+                name="first_name"
+                placeholder={userData ? userData.first_name : "Loading..."}
+                onChange={changeValue}
                 className="input input-bordered pl-10 w-full"
               />
             </div>
@@ -109,16 +156,21 @@ export default function EditPage() {
               </svg>
               <input
                 type="text"
-                value={response.data.last_name}
+                name="last_name"
+                placeholder={userData ? userData.last_name : "Loading..."}
+                onChange={changeValue}
                 className="input input-bordered pl-10 w-full"
               />
             </div>
           </div>
         </div>
-        <button className="w-1/2 mt-4 p-2 font-bold text-white bg-error text-center rounded">
+        <button type="submit" className="w-1/2 mt-4 p-2 font-bold text-white bg-error text-center rounded">
           Simpan
         </button>
-      </div>
+        <Link to="/akun" className="w-1/2 mt-4 p-2 font-bold border border-error text-error bg-base-100 text-center rounded">
+          Batalkan
+        </Link>
+      </form>
     );
   }
   

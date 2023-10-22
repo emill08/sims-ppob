@@ -1,8 +1,12 @@
 // import NavBar from "../components/NavBar";
-// import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { handleProfile, getBalance } from "../redux/action/userAction";
 
 export default function HomePage() {
+  const [userData, setUserData] = useState(null)
+  const [balance, setBalance] = useState(0)
+
   // loop menu icon
   const startNumber = 1;
   const endNumber = 12;
@@ -38,55 +42,56 @@ export default function HomePage() {
       </div>
     );
   }
-
-  // test authorization
-  function handleProfile() {
-    try {
-
-      fetch("https://take-home-test-api.nutech-integrasi.app/profile", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            return response.json().then((errorData) => {
-              throw new Error(errorData.message || "Failed to fetch profile data");
-            });
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile data:", error.message);
-        });
-    } catch (error) {
-      console.error("Error in handleProfile:", error.message);
-    }
-  }
   
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profile = await handleProfile();
+        console.log(profile, 'ini profile');
+        setUserData(profile.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error.message);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await getBalance();
+        console.log(response, 'ini di useEffect');
+        setBalance(response.data);
+      } catch (error) {
+        console.error("Error di useEffect:", error.message);
+      }
+    };
+  
+    fetchBalance();
+  }, []);
   
 
-  return (
+    return (
     <div className="flex flex-col mt-9 gap-3 mx-44">
       <div className="flex flex-row justify-between">
         {/* mini profile */}
         <div className="flex flex-col">
           <img
             src="/Profile Photo.png"
+            // src="{userData.profile}"
             alt="ProfilePicture"
             className="w-16 h-16"
           />
           <h3 className="text-2xl mt-3">Selamat datang,</h3>
-          <h1 className="text-3xl font-bold">Kristanto Wibowo</h1>
+          <h1 className="text-3xl font-bold">
+  {userData ? userData.first_name + " " + userData.last_name : "Loading..."}
+</h1>
         </div>
         {/* saldo */}
         <div className="px-5 py-6 flex flex-col bg-[url('/Background%20Saldo.png')] bg-cover bg-center w-[670px] h-[161px]">
           <h3 className="text-white text-md mt-3">Saldo anda</h3>
-          <h1 className="text-white text-3xl font-bold mt-1">Rp 0</h1>
+          <h1 className="text-white text-3xl font-bold mt-1">Rp {balance ? balance.balance : "Loading..."}</h1>
           <div className="flex items-center mt-4 mr">
             <h3 className="text-white text-sm">Lihat Saldo</h3>
           </div>
@@ -97,7 +102,7 @@ export default function HomePage() {
       <div className="carousel carousel-center space-x-16 rounded-box">
         {bannerPromo}
       </div>
-      <button onClick={handleProfile} className="flex justify-center">test</button>
+      {/* <button onClick={handleProfile} className="flex justify-center">test</button> */}
     </div>
   );
 }

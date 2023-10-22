@@ -1,18 +1,47 @@
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
+import { handleProfile, editProfilePhoto } from "../redux/action/userAction";
+import { useState, useEffect} from "react";
+
+
 
 export default function AccountPage() {
   const navigate = useNavigate()
+  const [userData, setUserData] = useState(null)
+  const [isFileInputVisible, setIsFileInputVisible] = useState(false)
 
-  const response = {
-    status: 0,
-    message: "Sukses",
-    data: {
-      email: "emil@test.com",
-      first_name: "em",
-      last_name: "il",
-      profile_image: "https://minio.nutech-integrasi.app/take-home-test/null",
-    },
+
+  const handleCancel = () => {
+    setIsFileInputVisible(false);
+  };
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profile = await handleProfile();
+        console.log(profile, 'ini profile');
+        setUserData(profile.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error.message);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+
+  const handlePhotoUpload = async (event) => {
+    const imageFile = event.target.files[0];
+    if (imageFile) {
+      try {
+        const formData = new FormData();
+        formData.append("profile_image", imageFile);
+        const response = await editProfilePhoto(formData);
+        console.log("Profile photo updated:", response);
+      } catch (error) {
+        console.error("Error updating profile photo:", error.message);
+      }
+    }
   };
 
   function handleLogout() {
@@ -29,32 +58,56 @@ export default function AccountPage() {
 
   return (
     <div className="flex flex-col items-center gap-5 mt-9">
-<div className="relative">
-  <img
-    src="/Profile Photo.png"
-    alt="ProfilePicture"
-    className="w-36 h-36"
-  />
-  <button className="absolute bottom-0 right-3 bg-base-100 border border-black rounded-full w-6 h-6 cursor-pointer ">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke="currentColor"
-      className="w-4 h-4 ml-1"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+ <div className="relative">
+      <img
+        src={userData ? userData.profile_image : '/Profile Photo.png'}
+        alt="ProfilePicture"
+        className="w-36 h-36"
       />
-    </svg>
-  </button>
-</div>
+      {isFileInputVisible ? (
+        <form onSubmit={handlePhotoUpload} className="">
+          <input
+            type="file"
+            name="profile_image"
+            className="file-input file-input-bordered w-full max-w-xs mt-5 flex items-center"
+            accept=".jpg, .jpeg, .png"
+            size={102400}
+            onChange={handlePhotoUpload}
+          />
+          <div className="flex justify-center mt-4">
+          <button onClick={handleCancel} className="w-1/4 border border-error mt-2 mr-4 p-2 font-bold text-error text-center rounded">
+            Cancel
+          </button>
+          <button type="submit" className="w-1/4 mt-2 p-2 font-bold text-white border border-success bg-success text-center rounded">
+            Submit
+          </button>
+        </div>
+        </form>
+      ) : (
+        <button
+          onClick={() => setIsFileInputVisible(true)}
+          className="absolute bottom-0 right-3 bg-base-100 border border-black rounded-full w-6 h-6 cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-4 h-4 ml-1"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+            />
+          </svg>
+        </button>
+      )}
+    </div>
 
       <p className="text-3xl font-bold mb-4">
-        {response.data.first_name + " " + response.data.last_name}
+      {userData ? userData.first_name + " " + userData.last_name : "Loading..."}
       </p>
 
       <div className="w-1/2">
@@ -76,7 +129,7 @@ export default function AccountPage() {
             </svg>
             <input
               type="email"
-              value={response.data.email}
+              value={userData ? userData.email : "Loading..."}
               disabled
               style={{ backgroundColor: "transparent", color: "black" }}
               className="input input-bordered pl-10 w-full"
@@ -103,7 +156,7 @@ export default function AccountPage() {
             </svg>
             <input
               type="text"
-              value={response.data.first_name}
+              value={userData ? userData.first_name : "Loading..."}
               disabled
               style={{ backgroundColor: "transparent", color: "black" }}
               className="input input-bordered pl-10 w-full"
@@ -130,7 +183,7 @@ export default function AccountPage() {
             </svg>
             <input
               type="text"
-              value={response.data.last_name}
+              value={userData ? userData.last_name : "Loading..."}
               disabled
               style={{ backgroundColor: "transparent", color: "black" }}
               className="input input-bordered pl-10 w-full"
