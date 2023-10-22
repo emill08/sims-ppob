@@ -38,6 +38,7 @@ export default function AccountPage() {
         formData.append("file", imageFile);
         const response = await editProfilePhoto(formData);
         console.log("Profile photo updated:", response);
+        navigate('/akun')
         Swal.fire({
           icon: 'success',
           text: `Profile has been updated`,
