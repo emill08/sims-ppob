@@ -95,7 +95,7 @@ export default function TopupPage() {
   return (
     <div className="flex flex-col mt-9 gap-3 mx-44">
       <div className="flex flex-row justify-between">
-        {/* mini profilee */}
+        {/* mini profile */}
         <div className="flex flex-col">
           <img
             src={userData ? userData.profile_image : '/Profile Photo.png'}
